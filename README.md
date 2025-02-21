@@ -3,14 +3,15 @@
 An example app built using the [DevCycle NestJS Server SDK](https://docs.devcycle.com/sdk/server-side-sdks/nestjs/) and TypeScript
 
 ## Creating a Demo Feature
-This example app requires that your project has a feature with the expected variables, as well as some simple targeting rules. 
 
-#### ⇨ [Click here](https://app.devcycle.com/r/create?resource=feature&key=hello-togglebot) to automatically create the feature in your project ⇦
+This example app requires that your project has a feature with the expected variables, as well as some simple targeting rules.
+
+### ⇨ [Click here](https://app.devcycle.com/r/create?resource=feature&key=hello-togglebot) to automatically create the feature in your project ⇦
 
 When you run the example app and switch your identity between users, you'll be able to see the feature's different variations.
 
-
 ## Running the Example
+
 ### Setup
 
 * Run `npm install` in the project directory to install dependencies
@@ -30,5 +31,5 @@ Requests may be sent to http://localhost:3000. See `src/app.controller.ts` for a
 `npm run test:e2e`
 
 ## Documentation
-For more information about using the DevCycle NestJS Server SDK, see [the documentation](https://docs.devcycle.com/sdk/server-side-sdks/nestjs/)
 
+For more information about using the DevCycle NestJS Server SDK, see [the documentation](https://docs.devcycle.com/sdk/server-side-sdks/nestjs/)
