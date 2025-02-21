@@ -15,11 +15,11 @@ import { TaskService } from './task.service';
       key: process.env.DEVCYCLE_SERVER_SDK_KEY,
       options: {},
       userFactory: (context: ExecutionContext) => ({
-        user_id: "user123",
-        name: "Jane Doe",
-        email: "jane.doe@email.com",
-      })
-    })
+        user_id: 'user123',
+        name: 'Jane Doe',
+        email: 'jane.doe@email.com',
+      }),
+    }),
   ],
   controllers: [AppController],
   providers: [AppService, TaskService],
