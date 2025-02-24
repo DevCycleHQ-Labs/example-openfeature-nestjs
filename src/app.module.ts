@@ -1,27 +1,41 @@
-import { ExecutionContext, Module } from '@nestjs/common';
+import { Module, OnModuleInit } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
-import { DevCycleModule } from '@devcycle/nestjs-server-sdk';
+import { OpenFeatureModule } from '@openfeature/nestjs-sdk';
+import { initializeDevCycle } from '@devcycle/nodejs-server-sdk';
+import { OpenFeature } from '@openfeature/server-sdk';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TaskService } from './task.service';
 
+const dvcClient = initializeDevCycle(process.env.DEVCYCLE_SERVER_SDK_KEY);
+
 @Module({
   imports: [
     ConfigModule.forRoot(),
     ScheduleModule.forRoot(),
-    DevCycleModule.forRoot({
-      key: process.env.DEVCYCLE_SERVER_SDK_KEY,
-      options: {},
-      userFactory: (context: ExecutionContext) => ({
-        user_id: 'user123',
-        name: 'Jane Doe',
+    OpenFeatureModule.forRoot({
+      contextFactory: () => ({
+        targetingKey: 'user123',
         email: 'jane.doe@email.com',
+        name: 'Jane Doe',
       }),
     }),
   ],
   controllers: [AppController],
-  providers: [AppService, TaskService],
+  providers: [
+    AppService,
+    TaskService,
+    {
+      provide: 'DVC_CLIENT',
+      useValue: dvcClient,
+    },
+  ],
 })
-export class AppModule {}
+export class AppModule implements OnModuleInit {
+  async onModuleInit() {
+    const provider = await dvcClient.getOpenFeatureProvider();
+    OpenFeature.setProvider(provider);
+  }
+}

@@ -1,5 +1,4 @@
 import { Controller, Get, Res } from '@nestjs/common';
-import { VariableValue } from '@devcycle/nestjs-server-sdk';
 import { AppService } from './app.service';
 
 @Controller()
@@ -7,11 +6,11 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get()
-  getHello(
-    @Res() res,
-    @VariableValue({ key: 'example-text', default: 'default' })
-    greeting: string,
-  ) {
+  async getHello(@Res() res) {
+    const greeting = await this.appService.getFeatureValue(
+      'example-text',
+      'default',
+    );
     const html = this.appService.getHello(greeting);
 
     res.setHeader('Content-Type', 'text/html');

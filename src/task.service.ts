@@ -1,6 +1,7 @@
-import { DevCycleClient } from '@devcycle/nestjs-server-sdk';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { Timeout } from '@nestjs/schedule';
+import { OpenFeatureClient, Client } from '@openfeature/nestjs-sdk';
+import { DevCycleClient } from '@devcycle/nodejs-server-sdk';
 
 const SERVICE_USER = { user_id: 'api-service' };
 
@@ -8,23 +9,26 @@ const SERVICE_USER = { user_id: 'api-service' };
 export class TaskService {
   private index = 0;
 
-  constructor(private readonly devcycleClient: DevCycleClient) {}
+  constructor(
+    @OpenFeatureClient() private ofClient: Client,
+    @Inject('DVC_CLIENT') private dvcClient: DevCycleClient,
+  ) {}
 
   @Timeout(500)
-  logVariation() {
-    const renderFrame = () => {
-      const features = this.devcycleClient.allFeatures(SERVICE_USER);
+  async logVariation() {
+    const renderFrame = async () => {
+      const features = this.dvcClient.allFeatures(SERVICE_USER);
       const { variationName = 'Default' } = features['hello-togglebot'] ?? {};
 
-      const wink = this.devcycleClient.variableValue(
-        SERVICE_USER,
+      const wink = await this.ofClient.getBooleanValue(
         'togglebot-wink',
         false,
-      );
-      const speed = this.devcycleClient.variableValue(
         SERVICE_USER,
+      );
+      const speed = await this.ofClient.getStringValue(
         'togglebot-speed',
         'off',
+        SERVICE_USER,
       );
 
       const spinChars = speed === 'slow' ? '◟◜◝◞' : '◜◠◝◞◡◟';
@@ -42,10 +46,11 @@ export class TaskService {
       const timeout = ['fast', 'surprise', 'off-axis'].includes(speed)
         ? 100
         : 500;
-      setTimeout(renderFrame, timeout);
+      setTimeout(async () => await renderFrame(), timeout);
     };
+
     process.stdout.write('\n');
-    renderFrame();
+    await renderFrame();
   }
 }
 

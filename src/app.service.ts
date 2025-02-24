@@ -1,11 +1,14 @@
-import { DevCycleClient, DevCycleService } from '@devcycle/nestjs-server-sdk';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
+import { OpenFeatureClient, Client } from '@openfeature/nestjs-sdk';
+import { DevCycleClient } from '@devcycle/nodejs-server-sdk';
+
+const SERVICE_USER = { user_id: 'api-service' };
 
 @Injectable()
 export class AppService {
   constructor(
-    private readonly devcycleClient: DevCycleClient,
-    private readonly devcycleService: DevCycleService,
+    @OpenFeatureClient() private ofClient: Client,
+    @Inject('DVC_CLIENT') private dvcClient: DevCycleClient,
   ) {}
 
   getHello(greeting: string): string {
@@ -14,8 +17,11 @@ export class AppService {
   }
 
   getVariables() {
-    const user = this.devcycleService.getUser();
-    return this.devcycleClient.allVariables(user);
+    return this.dvcClient.allVariables(SERVICE_USER);
+  }
+
+  async getFeatureValue(key: string, defaultValue: string): Promise<string> {
+    return await this.ofClient.getStringValue(key, defaultValue);
   }
 }
 

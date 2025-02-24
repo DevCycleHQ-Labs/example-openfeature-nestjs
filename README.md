@@ -26,10 +26,6 @@ You can find this under [Settings > Environments](https://app.devcycle.com/r/env
 Runs the app in the development mode.\
 Requests may be sent to http://localhost:3000. See `src/app.controller.ts` for available endpoints.
 
-### Testing
-
-`npm run test:e2e`
-
 ## Documentation
 
 For more information about using the DevCycle NestJS Server SDK, see [the documentation](https://docs.devcycle.com/sdk/server-side-sdks/nestjs/)
