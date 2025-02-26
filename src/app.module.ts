@@ -2,14 +2,14 @@ import { Module, OnModuleInit } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
 import { OpenFeatureModule } from '@openfeature/nestjs-sdk';
-import { initializeDevCycle } from '@devcycle/nodejs-server-sdk';
+import { DevCycleProvider } from '@devcycle/openfeature-nestjs-provider';
 import { OpenFeature } from '@openfeature/server-sdk';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TaskService } from './task.service';
 
-const dvcClient = initializeDevCycle(process.env.DEVCYCLE_SERVER_SDK_KEY);
+const provider = new DevCycleProvider(process.env.DEVCYCLE_SERVER_SDK_KEY);
 
 @Module({
   imports: [
@@ -29,13 +29,12 @@ const dvcClient = initializeDevCycle(process.env.DEVCYCLE_SERVER_SDK_KEY);
     TaskService,
     {
       provide: 'DVC_CLIENT',
-      useValue: dvcClient,
+      useValue: provider.devcycleClient,
     },
   ],
 })
 export class AppModule implements OnModuleInit {
   async onModuleInit() {
-    const provider = await dvcClient.getOpenFeatureProvider();
-    OpenFeature.setProvider(provider);
+    await OpenFeature.setProviderAndWait(provider);
   }
 }
