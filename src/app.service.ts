@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { OpenFeatureClient, Client } from '@openfeature/nestjs-sdk';
-import { DevCycleClient } from '@devcycle/nodejs-server-sdk';
+import { DevCycleClient } from '@devcycle/openfeature-nestjs-provider';
 
 const SERVICE_USER = { user_id: 'api-service' };
 

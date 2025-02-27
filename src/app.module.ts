@@ -2,14 +2,16 @@ import { Module, OnModuleInit } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
 import { OpenFeatureModule } from '@openfeature/nestjs-sdk';
-import { DevCycleProvider } from '@devcycle/openfeature-nestjs-provider';
+import { DevCycleNestJSProvider } from '@devcycle/openfeature-nestjs-provider';
 import { OpenFeature } from '@openfeature/server-sdk';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TaskService } from './task.service';
 
-const provider = new DevCycleProvider(process.env.DEVCYCLE_SERVER_SDK_KEY);
+const provider = new DevCycleNestJSProvider(
+  process.env.DEVCYCLE_SERVER_SDK_KEY,
+);
 
 @Module({
   imports: [
